@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import HORIZONTAL
+from tkinter import ttk
 
 window = tk.Tk()
 
@@ -24,9 +25,10 @@ imgDown = tk.PhotoImage(file = r"images\downArrow.png").subsample(20, 20)
 frame1 = tk.Frame(master=window, width=200, height=30, bg="yellow")
 #frame1.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
 #Them label TV LEFT/RIGHT
-llb_TVLeft = tk.Label(master=frame1, text="LG L", bg="yellow")
+llb_TVLeft = tk.Label(master=frame1, text="TVLG L", bg="yellow")
 llb_TVLeft.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
-
+lcb_TVLeft = ttk.Combobox(master=frame1)
+lcb_TVLeft.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
 #Frame nut on/off
 frame2 = tk.Frame(master=window, width=200, height=100)
 #frame2.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
@@ -87,7 +89,7 @@ lbtArrowUp = tk.Button(master=frame7, text="", bg="grey", image = imgDown)
 lbtArrowUp.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
 
 #Frame nut control
-frame8 = tk.Frame(master=window, width=200, height=100)
+frame8 = tk.Frame(master=window, width=200, height=100, pady = 50)
 #frame8.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
 lbtBack = tk.Button(master=frame8, text="Back", bg="grey")
 lbtExit = tk.Button(master=frame8, text="Exit", bg="grey")
@@ -102,9 +104,10 @@ lbtExit.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
 #Frame Ten TV
 frame9 = tk.Frame(master=window, width=200, height=30, bg="yellow")
 #Them label TV LEFT/RIGHT
-rlb_TVLeft = tk.Label(master=frame9, text="LG R", bg="yellow")
+rlb_TVLeft = tk.Label(master=frame9, text="TVLG R", bg="yellow")
 rlb_TVLeft.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
-
+rcb_TVLeft = ttk.Combobox(master=frame9)
+rcb_TVLeft.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
 #Frame nut on/off
 frame10 = tk.Frame(master=window, width=200, height=100)
 #Them button TV on/off
@@ -160,7 +163,7 @@ lbtArrowUp = tk.Button(master=frame15, text="", bg="grey", image = imgDown)
 lbtArrowUp.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
 
 #Frame nut control
-frame16 = tk.Frame(master=window, width=200, height=100)
+frame16 = tk.Frame(master=window, width=200, height=100, pady = 50)
 rbtBack = tk.Button(master=frame16, text="Back", bg="grey")
 rbtExit = tk.Button(master=frame16, text="Exit", bg="grey")
 rbtBack.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
