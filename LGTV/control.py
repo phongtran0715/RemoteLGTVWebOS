@@ -152,7 +152,7 @@ def scan_devices(output_file):
                 'model': it['model'],
                 'address': it['address'],
             })
-        with open(outfile, 'w') as outfile:
+        with open(output_file, 'w+') as outfile:
             json.dump(data, outfile)
     else:
         print (json.dumps({

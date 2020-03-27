@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import HORIZONTAL
 from tkinter import ttk
+from tkinter import messagebox  
+import control as ctrl
 
 window = tk.Tk()
 
@@ -8,6 +10,8 @@ window.title("Remote LG TVs")
 window.columnconfigure([0, 1], weight=1, minsize=75)
 window.rowconfigure([0, 1, 2, 3, 4, 5], weight=1, minsize=50)
 
+# global variable for list of tv in lan network
+lstDevice = list()
 # adding image (remember image should be PNG and not JPG) 
 
 # adding image (remember image should be PNG and not JPG) 
@@ -20,10 +24,25 @@ imgDown = tk.PhotoImage(file = r"images\downArrow.png").subsample(20, 20)
 ########################################################################
 ######################### SCAN TV ######################################
 ########################################################################
+def btScan_Click():
+    ctrl.scan_devices("devices.json")
+    devices = ctrl.read_devices_list("devices.json")
+    # Pair devices
+    global lstDevice
+    lstDevice.clear()
+    for item in devices:
+        lstDevice.append(item['model'] +  item['address'])
+
+    messagebox.showinfo("Notify","Scan completed!")
+
+def getListDevice():
+    lcb_TVLeft["values"] = lstDevice
+    rcb_TVLeft["values"] = lstDevice
 
 frame99 = tk.Frame(master=window, width=200, height=30, bg="yellow")
-btScan = tk.Button(master=frame99, text="SCAN", bg="grey")
+btScan = tk.Button(master=frame99, text="SCAN", bg="white", command = btScan_Click)
 btScan.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
+
 ########################################################################
 ######################### LEFT TV ######################################
 ########################################################################
@@ -34,22 +53,22 @@ frame1 = tk.Frame(master=window, width=200, height=30, bg="yellow")
 #Them label TV LEFT/RIGHT
 llb_TVLeft = tk.Label(master=frame1, text="TVLG L", bg="yellow")
 llb_TVLeft.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
-lcb_TVLeft = ttk.Combobox(master=frame1)
+lcb_TVLeft = ttk.Combobox(master=frame1, values =[],postcommand=getListDevice)
 lcb_TVLeft.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
 #Frame nut on/off
 frame2 = tk.Frame(master=window, width=200, height=100)
 #frame2.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
 #Them button TV on/off
-lbtON_TVLeft = tk.Button(master=frame2, text="ON", bg="grey", padx = 10)
+lbtON_TVLeft = tk.Button(master=frame2, text="ON", bg="white", padx = 10)
 lbtON_TVLeft.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=20)
-lbtOFF_TVRight = tk.Button(master=frame2, text="OFF", bg="grey", padx = 10)
+lbtOFF_TVRight = tk.Button(master=frame2, text="OFF", bg="white", padx = 10)
 lbtOFF_TVRight.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=20)
 
 #Frame nut HDMI
 frame3 = tk.Frame(master=window, width=200, height=100)
 #frame3.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
-lbtHDMI1_TVLeft = tk.Button(master=frame3, text="HDMI_1", bg="grey")
-lbtHDMI2_TVLeft = tk.Button(master=frame3, text="HDMI_2", bg="grey")
+lbtHDMI1_TVLeft = tk.Button(master=frame3, text="HDMI_1", bg="white")
+lbtHDMI2_TVLeft = tk.Button(master=frame3, text="HDMI_2", bg="white")
 lbtHDMI1_TVLeft.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
 lbtHDMI2_TVLeft.pack(fill=tk.BOTH, side=tk.BOTTOM, expand=True, padx=5, pady=5)
 
@@ -72,34 +91,34 @@ lvol.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
 #Frame mui ten dieu huong
 frame5 = tk.Frame(master=window, width=200, height=100)
 
-lbtArrowUp = tk.Button(master=frame5, text="", bg="grey", image = imgUp)
+lbtArrowUp = tk.Button(master=frame5, text="", bg="white", image = imgUp)
 lbtArrowUp.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
 
 #Frame mui ten dieu huong
 frame6 = tk.Frame(master=window, width=200, height=100)
 #frame6.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
 
-lbtArrowLf = tk.Button(master=frame6, text="", bg="grey", image = imgLf)
+lbtArrowLf = tk.Button(master=frame6, text="", bg="white", image = imgLf)
 lbtArrowLf.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
 
-lbtArrowRg = tk.Button(master=frame6, text="", bg="grey", image = imgRg)
+lbtArrowRg = tk.Button(master=frame6, text="", bg="white", image = imgRg)
 lbtArrowRg.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
 
 
-lbtWheel = tk.Button(master=frame6, text="", bg="grey", image = imgWheel)
+lbtWheel = tk.Button(master=frame6, text="", bg="white", image = imgWheel)
 lbtWheel.pack(fill=tk.BOTH, side=tk.BOTTOM, expand=True, padx=5, pady=5)
 
 #Frame mui ten dieu huong
 frame7 = tk.Frame(master=window, width=200, height=100)
 
-lbtArrowUp = tk.Button(master=frame7, text="", bg="grey", image = imgDown)
+lbtArrowUp = tk.Button(master=frame7, text="", bg="white", image = imgDown)
 lbtArrowUp.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
 
 #Frame nut control
 frame8 = tk.Frame(master=window, width=200, height=100, pady = 50)
 #frame8.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
-lbtBack = tk.Button(master=frame8, text="Back", bg="grey", padx = 10)
-lbtExit = tk.Button(master=frame8, text="Exit", bg="grey", padx = 10)
+lbtBack = tk.Button(master=frame8, text="Back", bg="white", padx = 10)
+lbtExit = tk.Button(master=frame8, text="Exit", bg="white", padx = 10)
 lbtBack.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=50, pady=5)
 lbtExit.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=50, pady=5)
 
@@ -113,21 +132,21 @@ frame9 = tk.Frame(master=window, width=200, height=30, bg="yellow")
 #Them label TV LEFT/RIGHT
 rlb_TVLeft = tk.Label(master=frame9, text="TVLG R", bg="yellow")
 rlb_TVLeft.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
-rcb_TVLeft = ttk.Combobox(master=frame9)
+rcb_TVLeft = ttk.Combobox(master=frame9, values =[],postcommand=getListDevice)
 rcb_TVLeft.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
 
 #Frame nut on/off
 frame10 = tk.Frame(master=window, width=200, height=100)
 #Them button TV on/off
-rbtON_TVLeft = tk.Button(master=frame10, text="ON", bg="grey", padx = 10)
+rbtON_TVLeft = tk.Button(master=frame10, text="ON", bg="white", padx = 10)
 rbtON_TVLeft.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx= 20)
-rbtOFF_TVRight = tk.Button(master=frame10, text="OFF", bg="grey", padx = 10)
+rbtOFF_TVRight = tk.Button(master=frame10, text="OFF", bg="white", padx = 10)
 rbtOFF_TVRight.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=20)
 
 #Frame nut HDMI
 frame11 = tk.Frame(master=window, width=200, height=100)
-rbtHDMI1_TVLeft = tk.Button(master=frame11, text="HDMI_1", bg="grey")
-rbtHDMI2_TVLeft = tk.Button(master=frame11, text="HDMI_2", bg="grey")
+rbtHDMI1_TVLeft = tk.Button(master=frame11, text="HDMI_1", bg="white")
+rbtHDMI2_TVLeft = tk.Button(master=frame11, text="HDMI_2", bg="white")
 rbtHDMI1_TVLeft.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
 rbtHDMI2_TVLeft.pack(fill=tk.BOTH, side=tk.BOTTOM, expand=True, padx=5, pady=5)
 
@@ -149,31 +168,31 @@ rvol.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
 #Frame mui ten dieu huong
 frame13 = tk.Frame(master=window, width=200, height=100)
 
-rbtArrowUp = tk.Button(master=frame13, text="", bg="grey", image = imgUp)
+rbtArrowUp = tk.Button(master=frame13, text="", bg="white", image = imgUp)
 rbtArrowUp.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
 
 #Frame mui ten dieu huong
 frame14 = tk.Frame(master=window, width=200, height=100)
-rbtArrowLf = tk.Button(master=frame14, text="", bg="grey", image = imgLf)
+rbtArrowLf = tk.Button(master=frame14, text="", bg="white", image = imgLf)
 rbtArrowLf.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
 
-rbtArrowRg = tk.Button(master=frame14, text="", bg="grey", image = imgRg)
+rbtArrowRg = tk.Button(master=frame14, text="", bg="white", image = imgRg)
 rbtArrowRg.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
 
 
-rbtWheel = tk.Button(master=frame14, text="", bg="grey", image = imgWheel)
+rbtWheel = tk.Button(master=frame14, text="", bg="white", image = imgWheel)
 rbtWheel.pack(fill=tk.BOTH, side=tk.BOTTOM, expand=True, padx=5, pady=5)
 
 #Frame mui ten dieu huong
 frame15 = tk.Frame(master=window, width=200, height=100)
 
-lbtArrowUp = tk.Button(master=frame15, text="", bg="grey", image = imgDown)
+lbtArrowUp = tk.Button(master=frame15, text="", bg="white", image = imgDown)
 lbtArrowUp.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
 
 #Frame nut control
 frame16 = tk.Frame(master=window, width=200, height=100, pady = 50)
-rbtBack = tk.Button(master=frame16, text="Back", bg="grey", padx = 10)
-rbtExit = tk.Button(master=frame16, text="Exit", bg="grey", padx = 10)
+rbtBack = tk.Button(master=frame16, text="Back", bg="white", padx = 10)
+rbtExit = tk.Button(master=frame16, text="Exit", bg="white", padx = 10)
 rbtBack.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=50, pady=5)
 rbtExit.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=50, pady=5)
 
