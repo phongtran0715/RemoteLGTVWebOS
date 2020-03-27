@@ -18,6 +18,13 @@ imgWheel = tk.PhotoImage(file = r"images\wheel.png").subsample(20, 20)
 imgDown = tk.PhotoImage(file = r"images\downArrow.png").subsample(20, 20)
 
 ########################################################################
+######################### SCAN TV ######################################
+########################################################################
+
+frame99 = tk.Frame(master=window, width=200, height=30, bg="yellow")
+btScan = tk.Button(master=frame99, text="SCAN", bg="grey")
+btScan.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
+########################################################################
 ######################### LEFT TV ######################################
 ########################################################################
 
@@ -172,14 +179,16 @@ rbtExit.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
 ############################
 # Aligment Frame
 ############################
-frame1.grid(row=0, column=0)
-frame2.grid(row=1, column=0)
-frame3.grid(row=2, column=0)
-frame4.grid(row=3, column=0)
-frame5.grid(row=4, column=0)
-frame6.grid(row=5, column=0)
-frame7.grid(row=6, column=0)
-frame8.grid(row=7, column=0)
+frame99.grid(row=0,column = 1)
+
+frame1.grid(row=1, column=0)
+frame2.grid(row=2, column=0)
+frame3.grid(row=3, column=0)
+frame4.grid(row=4, column=0)
+frame5.grid(row=5, column=0)
+frame6.grid(row=6, column=0)
+frame7.grid(row=7, column=0)
+frame8.grid(row=8, column=0)
 
 frame0 = tk.Frame(master=window, width=50, height=900)
 label = tk.Label(
@@ -193,14 +202,14 @@ label.pack(fill=tk.BOTH, expand=True)
 frame0.grid(row=2, column=1)
 
 
-frame9.grid(row=0, column=2)
-frame10.grid(row=1, column=2)
-frame11.grid(row=2, column=2)
-frame12.grid(row=3, column=2)
-frame13.grid(row=4, column=2)
-frame14.grid(row=5, column=2)
-frame15.grid(row=6, column=2)
-frame16.grid(row=7, column=2)
+frame9.grid(row=1, column=2)
+frame10.grid(row=2, column=2)
+frame11.grid(row=3, column=2)
+frame12.grid(row=4, column=2)
+frame13.grid(row=5, column=2)
+frame14.grid(row=6, column=2)
+frame15.grid(row=7, column=2)
+frame16.grid(row=8, column=2)
 
 #################
 #Start gui
