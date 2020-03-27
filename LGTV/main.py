@@ -40,10 +40,10 @@ lcb_TVLeft.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
 frame2 = tk.Frame(master=window, width=200, height=100)
 #frame2.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
 #Them button TV on/off
-lbtON_TVLeft = tk.Button(master=frame2, text="ON", bg="grey")
-lbtON_TVLeft.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
-lbtOFF_TVRight = tk.Button(master=frame2, text="OFF", bg="grey")
-lbtOFF_TVRight.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
+lbtON_TVLeft = tk.Button(master=frame2, text="ON", bg="grey", padx = 10)
+lbtON_TVLeft.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=20)
+lbtOFF_TVRight = tk.Button(master=frame2, text="OFF", bg="grey", padx = 10)
+lbtOFF_TVRight.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=20)
 
 #Frame nut HDMI
 frame3 = tk.Frame(master=window, width=200, height=100)
@@ -98,10 +98,10 @@ lbtArrowUp.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
 #Frame nut control
 frame8 = tk.Frame(master=window, width=200, height=100, pady = 50)
 #frame8.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
-lbtBack = tk.Button(master=frame8, text="Back", bg="grey")
-lbtExit = tk.Button(master=frame8, text="Exit", bg="grey")
-lbtBack.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
-lbtExit.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
+lbtBack = tk.Button(master=frame8, text="Back", bg="grey", padx = 10)
+lbtExit = tk.Button(master=frame8, text="Exit", bg="grey", padx = 10)
+lbtBack.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=50, pady=5)
+lbtExit.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=50, pady=5)
 
 
 ########################################################################
@@ -115,13 +115,14 @@ rlb_TVLeft = tk.Label(master=frame9, text="TVLG R", bg="yellow")
 rlb_TVLeft.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
 rcb_TVLeft = ttk.Combobox(master=frame9)
 rcb_TVLeft.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
+
 #Frame nut on/off
 frame10 = tk.Frame(master=window, width=200, height=100)
 #Them button TV on/off
-rbtON_TVLeft = tk.Button(master=frame10, text="ON", bg="grey")
-rbtON_TVLeft.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
-rbtOFF_TVRight = tk.Button(master=frame10, text="OFF", bg="grey")
-rbtOFF_TVRight.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
+rbtON_TVLeft = tk.Button(master=frame10, text="ON", bg="grey", padx = 10)
+rbtON_TVLeft.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx= 20)
+rbtOFF_TVRight = tk.Button(master=frame10, text="OFF", bg="grey", padx = 10)
+rbtOFF_TVRight.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=20)
 
 #Frame nut HDMI
 frame11 = tk.Frame(master=window, width=200, height=100)
@@ -171,10 +172,10 @@ lbtArrowUp.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
 
 #Frame nut control
 frame16 = tk.Frame(master=window, width=200, height=100, pady = 50)
-rbtBack = tk.Button(master=frame16, text="Back", bg="grey")
-rbtExit = tk.Button(master=frame16, text="Exit", bg="grey")
-rbtBack.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
-rbtExit.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
+rbtBack = tk.Button(master=frame16, text="Back", bg="grey", padx = 10)
+rbtExit = tk.Button(master=frame16, text="Exit", bg="grey", padx = 10)
+rbtBack.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=50, pady=5)
+rbtExit.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=50, pady=5)
 
 ############################
 # Aligment Frame
