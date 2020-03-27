@@ -21,9 +21,7 @@ imgRg = tk.PhotoImage(file = r"images\rightArrow.png").subsample(20, 20)
 imgWheel = tk.PhotoImage(file = r"images\wheel.png").subsample(20, 20)
 imgDown = tk.PhotoImage(file = r"images\downArrow.png").subsample(20, 20)
 
-########################################################################
-######################### SCAN TV ######################################
-########################################################################
+#region handle events
 def btScan_Click():
     ctrl.scan_devices("devices.json")
     devices = ctrl.read_devices_list("devices.json")
@@ -31,13 +29,32 @@ def btScan_Click():
     global lstDevice
     lstDevice.clear()
     for item in devices:
-        lstDevice.append(item['model'] +  item['address'])
+        lstDevice.append(item['model'] + "_" + item['address'])
 
     messagebox.showinfo("Notify","Scan completed!")
+
+def lbtOFF_TVRight_Click():
+    identifier = lcb_TVLeft.get()
+    if identifier.strip():
+        ipAddress = identifier.split("_",1)[1]
+        devices = ctrl.read_devices_list("devices.json")
+        for item in devices:
+            if (ipAddress == item['address']):
+                name = item['uuid']
+                command = "off"
+                args = []
+                ctrl.send_command(name, command, args, devices)
+    else:
+        messagebox.showinfo("Warning","Selected at least one!")
 
 def getListDevice():
     lcb_TVLeft["values"] = lstDevice
     rcb_TVLeft["values"] = lstDevice
+
+#endregion
+########################################################################
+######################### SCAN TV ######################################
+########################################################################
 
 frame99 = tk.Frame(master=window, width=200, height=30, bg="yellow")
 btScan = tk.Button(master=frame99, text="SCAN", bg="white", command = btScan_Click)
@@ -61,7 +78,7 @@ frame2 = tk.Frame(master=window, width=200, height=100)
 #Them button TV on/off
 lbtON_TVLeft = tk.Button(master=frame2, text="ON", bg="white", padx = 10)
 lbtON_TVLeft.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=20)
-lbtOFF_TVRight = tk.Button(master=frame2, text="OFF", bg="white", padx = 10)
+lbtOFF_TVRight = tk.Button(master=frame2, text="OFF", bg="white", padx = 10, command = lbtOFF_TVRight_Click)
 lbtOFF_TVRight.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=20)
 
 #Frame nut HDMI

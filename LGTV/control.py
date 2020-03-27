@@ -154,6 +154,7 @@ def scan_devices(output_file):
             })
         with open(output_file, 'w+') as outfile:
             json.dump(data, outfile)
+            
     else:
         print (json.dumps({
             "result": "failed",
@@ -179,7 +180,7 @@ def main():
         name = item['uuid']
         command = "off"
         args = []
-        send_command(name, command, args, data)
+        send_command(name, command, args, config)
         
 if __name__ == '__main__':
     workspace = os.path.join(os.path.expanduser("~"),".lgtv")
