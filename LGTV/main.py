@@ -26,7 +26,7 @@ imgDown = tk.PhotoImage(file = r"images\downArrow.png").subsample(20, 20)
 def btScan_Click():
     global devices
     global cbListValue
-    # ctrl.scan_devices("devices.json")
+    #ctrl.scan_devices("devices.json")
     devices = ctrl.read_devices_list("devices.json")
     # Pair devices
     cbListValue.clear()
@@ -36,21 +36,42 @@ def btScan_Click():
     messagebox.showinfo("Notify","Scan completed!")
 
 def lbtOFF_TVRight_Click():
-    index = lcb_TVLeft.current()
-    if index >= 0:
-        device = devices[index]
-        name = device['uuid']
-        address = device['address']
-        command = "off"
-        args = [""]
-        config = ctrl.read_config_file(name, address)
-        if(config == None):
-            messagebox.showerror("Error","Can not get config file!")
-            return            
-        print(config)
-        # ctrl.send_command(name, command, args, config)
-    else:
-        messagebox.showerror("Error!","You must select TV device")
+    result = messagebox.askquestion("Turn Off", "Are you sure turn off?", icon='warning', type='yesno')
+    if (result == "yes"):
+        index = lcb_TVLeft.current()
+        if index >= 0:
+            device = devices[index]
+            name = device['uuid']
+            address = device['address']
+            command = "off"
+            args = []
+            config = ctrl.read_config_file(name, address)
+            if(config == None):
+                messagebox.showerror("Error","Can not get config file!")
+                return            
+            print(config)
+            ctrl.send_command(name, command, args, config)
+        else:
+            messagebox.showerror("Error!","You must select TV device")
+
+def rbtOFF_TVRight_Click():
+    result = messagebox.askquestion("Turn Off", "Are you sure turn off?", icon='warning', type='yesno')
+    if (result == "Yes"):
+        index = rcb_TVLeft.current()
+        if index >= 0:
+            device = devices[index]
+            name = device['uuid']
+            address = device['address']
+            command = "off"
+            args = []
+            config = ctrl.read_config_file(name, address)
+            if(config == None):
+                messagebox.showerror("Error","Can not get config file!")
+                return            
+            print(config)
+            ctrl.send_command(name, command, args, config)
+        else:
+            messagebox.showerror("Error!","You must select TV device")
 
 def getListDevice():
     lcb_TVLeft["values"] = cbListValue
@@ -62,7 +83,58 @@ def cbleft_callback(eventObject):
     device = devices[index]
     print(device)
     ctrl.pair_device(device['uuid'], device['address'])
+    getVolTVLeft()
 
+def cbright_callback(eventObject):
+    index = rcb_TVLeft.current()
+    print('index of this item is: {}\n'.format(rcb_TVLeft.current()))
+    device = devices[index]
+    print(device)
+    ctrl.pair_device(device['uuid'], device['address'])
+
+def lchange_vol(eventObject):
+    l_slider_value  = lvol.get()
+    index = lcb_TVLeft.current()
+    if index >= 0:
+        device = devices[index]
+        name = device['uuid']
+        address = device['address']
+        command = "setVolume"
+        args = [str(l_slider_value)]
+        config = ctrl.read_config_file(name, address)
+        if(config == None):
+            messagebox.showerror("Error","Can not get config file!")
+            return            
+        print(config)
+        ctrl.send_command(name, command, args, config)
+
+def getVolTVLeft():
+    index = lcb_TVLeft.current()
+    if index >= 0:
+        device = devices[index]
+        name = device['uuid']
+        address = device['address']
+        command = "audioVolume"
+        args = []
+        config = ctrl.read_config_file(name, address)
+        if(config == None):
+            messagebox.showerror("Error","Can not get config file!")
+            return            
+        print("INNNNNNNNNNNNNNNNNNNNNNNNN")
+        ctrl.send_command(name, command, args, config)
+
+def initListDevice():
+    global devices
+    global cbListValue
+    # ctrl.scan_devices("devices.json")
+    devices = ctrl.read_devices_list("devices.json")
+    cbListValue.clear()
+    for item in devices:
+        cbListValue.append(item['model'] + "_" + item['address'])
+
+#endregion
+#Lay danh sach devices trong file json
+initListDevice()
 frame99 = tk.Frame(master=window, width=200, height=30, bg="yellow")
 btScan = tk.Button(master=frame99, text="SCAN", bg="white", command = btScan_Click)
 btScan.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
@@ -77,7 +149,7 @@ frame1 = tk.Frame(master=window, width=200, height=30, bg="yellow")
 #Them label TV LEFT/RIGHT
 llb_TVLeft = tk.Label(master=frame1, text="TVLG L", bg="yellow")
 llb_TVLeft.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
-lcb_TVLeft = ttk.Combobox(master=frame1, values =[],postcommand=getListDevice)
+lcb_TVLeft = ttk.Combobox(master=frame1, values =cbListValue,postcommand=getListDevice)
 lcb_TVLeft.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
 lcb_TVLeft.bind("<<ComboboxSelected>>", cbleft_callback)
 #Frame nut on/off
@@ -105,14 +177,14 @@ lvol = tk.Scale(
     from_ = 0,
     to = 100,
     orient = HORIZONTAL,
+    label = "Volume",
 	#tickinterval=10,
     resolution = 1,
     ####################
-    #command=change_vol
+    command=lchange_vol
     ####################
 )
 lvol.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
-
 #Frame mui ten dieu huong
 frame5 = tk.Frame(master=window, width=200, height=100)
 
@@ -157,15 +229,15 @@ frame9 = tk.Frame(master=window, width=200, height=30, bg="yellow")
 #Them label TV LEFT/RIGHT
 rlb_TVLeft = tk.Label(master=frame9, text="TVLG R", bg="yellow")
 rlb_TVLeft.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
-rcb_TVLeft = ttk.Combobox(master=frame9, values =[],postcommand=getListDevice)
+rcb_TVLeft = ttk.Combobox(master=frame9, values =cbListValue,postcommand=getListDevice)
 rcb_TVLeft.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
-
+rcb_TVLeft.bind("<<ComboboxSelected>>", cbright_callback)
 #Frame nut on/off
 frame10 = tk.Frame(master=window, width=200, height=100)
 #Them button TV on/off
 rbtON_TVLeft = tk.Button(master=frame10, text="ON", bg="white", padx = 10)
 rbtON_TVLeft.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx= 20)
-rbtOFF_TVRight = tk.Button(master=frame10, text="OFF", bg="white", padx = 10)
+rbtOFF_TVRight = tk.Button(master=frame10, text="OFF", bg="white", padx = 10, command = rbtOFF_TVRight_Click)
 rbtOFF_TVRight.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=20)
 
 #Frame nut HDMI
@@ -182,8 +254,9 @@ rvol = tk.Scale(
     from_ = 0,
     to = 100,
     orient = HORIZONTAL,
+    label = "Volume",
 	#tickinterval=10,
-    resolution = 1,
+    resolution = 1
     ####################
     #command=change_vol
     ####################

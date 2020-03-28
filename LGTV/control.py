@@ -39,7 +39,12 @@ def usage(error=None):
             print ('  ' + c)
 
 def parseargs(command, argv):
+    print("Command:"+command)
     args = getargspec(LGTVRemote.__dict__[command])
+    if args != None:
+        print("Here")
+        print(args)
+        print("END")
     args = args.args[1:-1]
 
     if len(args) != len(argv):
@@ -89,14 +94,15 @@ def send_command(name, command, args, config):
         ws = LGTVRemote(name, **config[name])
         ws.on()
         return
-    else:
-        try:
-            args = parseargs(name, args)
-        except Exception as e:
-            usage(e.message)
-            return
+        
+        # try:
+        #     args = parseargs(name, args)
+        # except Exception as e:
+        #     usage(e.message)
+        #     return
     try:
         ws = LGTVRemote(name, **config[name])
+        args = parseargs(command, args)
         ws.connect()
         if command is not None:
             ws.execute(command, args)

@@ -23,6 +23,7 @@ def LGTVScan():
         address = None
         data = {}
         response, address = sock.recvfrom(512)
+        #print(response)
         sock.settimeout(5)
         for line in response.split(b'\n'):
             if line.startswith(b'USN'):
