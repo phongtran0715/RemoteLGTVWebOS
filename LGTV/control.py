@@ -106,10 +106,14 @@ def send_command(name, command, args, config):
 
 def read_config_file(name, host):
     data = None
-    config_file = name + "_" + host + ".json"
-    if os.path.isfile(config) == True:
-        with open(file) as f:
+    workspace = os.path.join(os.path.expanduser("~"),".lgtv")
+    filename = name + "_" + host + ".json"
+    filename = os.path.join(workspace,filename)
+    if os.path.isfile(filename) == True:
+        with open(filename) as f:
             data = json.load(f)
+    else:
+        print("Error! Config file doesn't existed")
     return data
 
 def pair_device(name, host):
@@ -132,6 +136,8 @@ def read_devices_list(file):
     if os.path.isfile(file) == True:
         with open(file) as f:
             devices = json.load(f)
+    else:
+        print("Error! Devices list file doen't existed")
     return devices
 
 def scan_devices(output_file):

@@ -14,7 +14,6 @@ window.rowconfigure([0, 1, 2, 3, 4, 5], weight=1, minsize=50)
 # global variable for list of tv in lan network
 cbListValue = list()
 devices = list()
-# adding image (remember image should be PNG and not JPG) 
 
 # adding image (remember image should be PNG and not JPG) 
 imgUp = tk.PhotoImage(file = r"images\upArrow.png").subsample(20, 20)
@@ -37,32 +36,29 @@ def btScan_Click():
     messagebox.showinfo("Notify","Scan completed!")
 
 def lbtOFF_TVRight_Click():
-    identifier = lcb_TVLeft.get()
-    if identifier.strip():
-        ipAddress = identifier.split("_",1)[1]
-        devices = ctrl.read_devices_list("devices.json")
-        for item in devices:
-            if (ipAddress == item['address']):
-                name = item['uuid']
-                command = "off"
-                args = []
-                ctrl.send_command(name, command, args, devices)
+    index = lcb_TVLeft.current()
+    if index >= 0:
+        device = devices[index]
+        name = device['uuid']
+        address = device['address']
+        command = "off"
+        args = [""]
+        config = ctrl.read_config_file(name, address)
+        if(config == None):
+            messagebox.showerror("Error","Can not get config file!")
+            return            
+        print(config)
+        # ctrl.send_command(name, command, args, config)
     else:
-        messagebox.showinfo("Warning","Selected at least one!")
+        messagebox.showerror("Error!","You must select TV device")
 
 def getListDevice():
     lcb_TVLeft["values"] = cbListValue
     rcb_TVLeft["values"] = cbListValue
 
-#endregion
-########################################################################
-######################### SCAN TV ######################################
-########################################################################
-
 def cbleft_callback(eventObject):
     index = lcb_TVLeft.current()
     print('index of this item is: {}\n'.format(lcb_TVLeft.current()))
-    #TODO: pair to selected device
     device = devices[index]
     print(device)
     ctrl.pair_device(device['uuid'], device['address'])
