@@ -114,6 +114,7 @@ def read_config_file(name, host):
 
 def pair_device(name, host):
     print("Start to authen device : %s - %s" % (name, host))
+    workspace = os.path.join(os.path.expanduser("~"),".lgtv")
     filename = name + "_" + host + ".json"
     filename = os.path.join(workspace,filename)
     ws = LGTVAuth(name, host)
@@ -162,31 +163,22 @@ def scan_devices(output_file):
         }))
         return
 
-def main():
-    devices_list = os.path.join(workspace,'devices.json')
-    # Scan all devices
-    scan_devices(devices_list)
+# def main():
+#     devices_list = os.path.join(workspace,'devices.json')
+#     # Scan all devices
+#     scan_devices(devices_list)
 
-    # Read devices list
-    devices = read_devices_list(devices_list)
+#     # Read devices list
+#     devices = read_devices_list(devices_list)
 
-    # Pair devices
-    for item in devices:
-        pair_device(item['uuid'], item['address'])
+#     # Pair devices
+#     for item in devices:
+#         pair_device(item['uuid'], item['address'])
 
-    # Send command
-    for item in devices:
-        config =  read_config_file(item['uuid'], item['address'])
-        name = item['uuid']
-        command = "off"
-        args = []
-        send_command(name, command, args, config)
-        
-if __name__ == '__main__':
-    workspace = os.path.join(os.path.expanduser("~"),".lgtv")
-    if not os.path.exists(workspace):
-        os.makedirs(workspace)
-    print("workspace : %s" % workspace)
-    # main()
-    print("Bye")
-    input("Press Enter to continue...")
+#     # Send command
+#     for item in devices:
+#         config =  read_config_file(item['uuid'], item['address'])
+#         name = item['uuid']
+#         command = "off"
+#         args = []
+#         send_command(name, command, args, config)

@@ -3,6 +3,7 @@ from tkinter import HORIZONTAL
 from tkinter import ttk
 from tkinter import messagebox  
 import control as ctrl
+import os
 
 window = tk.Tk()
 
@@ -11,7 +12,8 @@ window.columnconfigure([0, 1], weight=1, minsize=75)
 window.rowconfigure([0, 1, 2, 3, 4, 5], weight=1, minsize=50)
 
 # global variable for list of tv in lan network
-lstDevice = list()
+cbListValue = list()
+devices = list()
 # adding image (remember image should be PNG and not JPG) 
 
 # adding image (remember image should be PNG and not JPG) 
@@ -23,13 +25,14 @@ imgDown = tk.PhotoImage(file = r"images\downArrow.png").subsample(20, 20)
 
 #region handle events
 def btScan_Click():
-    ctrl.scan_devices("devices.json")
+    global devices
+    global cbListValue
+    # ctrl.scan_devices("devices.json")
     devices = ctrl.read_devices_list("devices.json")
     # Pair devices
-    global lstDevice
-    lstDevice.clear()
+    cbListValue.clear()
     for item in devices:
-        lstDevice.append(item['model'] + "_" + item['address'])
+        cbListValue.append(item['model'] + "_" + item['address'])
 
     messagebox.showinfo("Notify","Scan completed!")
 
@@ -48,13 +51,21 @@ def lbtOFF_TVRight_Click():
         messagebox.showinfo("Warning","Selected at least one!")
 
 def getListDevice():
-    lcb_TVLeft["values"] = lstDevice
-    rcb_TVLeft["values"] = lstDevice
+    lcb_TVLeft["values"] = cbListValue
+    rcb_TVLeft["values"] = cbListValue
 
 #endregion
 ########################################################################
 ######################### SCAN TV ######################################
 ########################################################################
+
+def cbleft_callback(eventObject):
+    index = lcb_TVLeft.current()
+    print('index of this item is: {}\n'.format(lcb_TVLeft.current()))
+    #TODO: pair to selected device
+    device = devices[index]
+    print(device)
+    ctrl.pair_device(device['uuid'], device['address'])
 
 frame99 = tk.Frame(master=window, width=200, height=30, bg="yellow")
 btScan = tk.Button(master=frame99, text="SCAN", bg="white", command = btScan_Click)
@@ -72,6 +83,7 @@ llb_TVLeft = tk.Label(master=frame1, text="TVLG L", bg="yellow")
 llb_TVLeft.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
 lcb_TVLeft = ttk.Combobox(master=frame1, values =[],postcommand=getListDevice)
 lcb_TVLeft.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
+lcb_TVLeft.bind("<<ComboboxSelected>>", cbleft_callback)
 #Frame nut on/off
 frame2 = tk.Frame(master=window, width=200, height=100)
 #frame2.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
@@ -247,6 +259,12 @@ frame13.grid(row=5, column=2)
 frame14.grid(row=6, column=2)
 frame15.grid(row=7, column=2)
 frame16.grid(row=8, column=2)
+
+
+workspace = os.path.join(os.path.expanduser("~"),".lgtv")
+if not os.path.exists(workspace):
+    os.makedirs(workspace)
+print("workspace : %s" % workspace)
 
 #################
 #Start gui
