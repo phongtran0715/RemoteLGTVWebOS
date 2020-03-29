@@ -35,9 +35,7 @@ def parseargs(command, argv):
     print("Command:"+command)
     args = getargspec(LGTVRemote.__dict__[command])
     if args != None:
-        print("Here")
         print(args)
-        print("END")
     args = args.args[1:-1]
 
     if len(args) != len(argv):
@@ -143,3 +141,9 @@ def scan_devices(output_file):
             "count": len(results)
         }))
     return devices
+
+def getMac(name, address):
+    ws = LGTVAuth(name, address)
+    mac = ws.get_mac_address(address)
+    return mac
+

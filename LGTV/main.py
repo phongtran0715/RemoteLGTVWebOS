@@ -18,11 +18,11 @@ class LGRemote:
         self.parent.eval('tk::PlaceWindow . center')
 
         # adding image (remember image should be PNG and not JPG) 
-        self.imgUp = tk.PhotoImage(file = r"upArrow.png").subsample(20, 20)
-        self.imgLf = tk.PhotoImage(file = r"leftArrow.png").subsample(20, 20)
-        self.imgRg = tk.PhotoImage(file = r"rightArrow.png").subsample(20, 20)
-        self.imgWheel = tk.PhotoImage(file = r"wheel.png").subsample(20, 20)
-        self.imgDown = tk.PhotoImage(file = r"downArrow.png").subsample(20, 20)
+        self.imgUp = tk.PhotoImage(file = os.path.join(os.getcwd(), r"images",r"upArrow.png")).subsample(20, 20)
+        self.imgLf = tk.PhotoImage(file = os.path.join(os.getcwd(), r"images",r"leftArrow.png")).subsample(20, 20)
+        self.imgRg = tk.PhotoImage(file = os.path.join(os.getcwd(), r"images",r"rightArrow.png")).subsample(20, 20)
+        self.imgWheel = tk.PhotoImage(file = os.path.join(os.getcwd(), r"images",r"wheel.png")).subsample(20, 20)
+        self.imgDown = tk.PhotoImage(file = os.path.join(os.getcwd(), r"images",r"downArrow.png")).subsample(20, 20)
 
         frame99 = tk.Frame(self.parent, width=200, height=30, bg="yellow")
         btScan = tk.Button(frame99, text="SCAN", bg="white", command = self.scanDevices)
@@ -218,7 +218,7 @@ class LGRemote:
             print(config)
             ctrl.send_command(name, command, args, config)
         else:
-            messagebox.showerror("Error!","You must select TV device")        
+            messagebox.showerror("Error!","You must select TV device")
 
     def pairDevice(self, index):
         try:
@@ -226,15 +226,15 @@ class LGRemote:
             name = device['uuid']
             address = device['address']
             configFile = name + "_" + address + ".json"
-            configFile = os.path.join(workspace,filename)
+            configFile = os.path.join(workspace,configFile)
             if os.path.isfile(configFile) == False:
                 result = ctrl.pair_device(name, address, configFile)
                 if result == False:
-                    messagebox.showerror("Error!","Can not pair TV device")        
+                    messagebox.showerror("Error 002!","Can not pair TV device")        
             else:
                 print("Device index %d had already paired" % index)
         except:
-            messagebox.showerror("Error!","Can not pair TV device")
+            messagebox.showerror("Error 001!","Can not pair TV device")
 
     def executeCommand(self, index, command, args):
         if index >= 0:
@@ -245,7 +245,6 @@ class LGRemote:
             if(config == None):
                 messagebox.showerror("Error","Can not get config file!")
                 return            
-            print(config)
             ctrl.send_command(name, command, args, config)
 
     def setVolume(self, eventObject):
@@ -262,19 +261,22 @@ class LGRemote:
         return sources
     
     def getListInputs(self, index):
+        print("Function getListInputs : index = " + str(index))
         command = "listInputs"
         args = []
         self.executeCommand(index, command, args)
 
     def setInput(self, index, inputId):
+        print(index)
         command = "setInput"
         args = []
-        sources = self.getListInputs()
-        if len(sources) >= inputId:
-            args = [sources[inputId]]
-            self.executeCommand(index, command, args)
-        else:
-            messagebox.showerror("Error!","Input source doesn't existed")
+        #sources = self.getListInputs(index)
+        self.getListInputs(index)
+        # if len(sources) >= inputId:
+        #     args = [sources[inputId]]
+        #     self.executeCommand(index, command, args)
+        # else:
+        #     messagebox.showerror("Error!","Input source doesn't existed")
 
     def listChannel(self, index):
         command = "listChannels"

@@ -112,6 +112,9 @@ class LGTVRemote(WebSocketClient):
 
     def __defaultHandler(self, response):
         # {"type":"response","id":"0","payload":{"returnValue":true}}
+        print("=====> Function __defaultHandler")
+        print(response)
+        print(" Function __defaultHandler <=====")
         if response['type'] == "error":
             print (json.dumps(response))
             self.close()
@@ -121,6 +124,20 @@ class LGTVRemote(WebSocketClient):
         else:
             print (json.dumps(response))
 
+    def getInputCallback(self, response):
+        # {"type":"response","id":"0","payload":{"returnValue":true}}
+        print("=====> Function getInputCallback")
+        print(response)
+        print(" Function getInputCallback <=====")
+        # if response['type'] == "error":
+        #     print (json.dumps(response))
+        #     self.close()
+        # if "returnValue" in response["payload"] and response["payload"]["returnValue"] is True:
+        #     print (json.dumps(response))
+        #     self.close()
+        # else:
+        #     print (json.dumps(response))
+  
     def __send_command(self, msgtype, uri, payload=None, callback=None, prefix=None):
         if not callback:
             callback = self.__defaultHandler

@@ -47,8 +47,9 @@ class LGTVAuth(WebSocketClient):
             self.close()
             return
 
-    def __get_mac_address(self, address):
-        pid = subprocess.Popen(["arp", "-n", address], stdout=subprocess.PIPE)
+    def __get_mac_address_bak(self, address):
+        pid = subprocess.Popen(["arp", "-a", address], stdout=subprocess.PIPE)
+        print(pid)
         s = pid.communicate()[0]
         s = s.decode("utf-8")
         matches = re.search(r"(([a-f\d]{1,2}\:){5}[a-f\d]{1,2})", s)
@@ -56,6 +57,17 @@ class LGTVAuth(WebSocketClient):
             return None
         mac = matches.groups()[0]
         m = mac.split(':')
+        mac = ':'.join(['%02x' % int(x, 16) for x in m])
+        return mac
+
+    def __get_mac_address(self, address):
+        pid = subprocess.Popen(["arp", "-a", address], stdout=subprocess.PIPE)
+        print(pid)
+        s = pid.communicate()[0]
+        s = s.decode("utf-8")
+        p = re.compile(r'(?:[0-9a-fA-F]-?){12}')
+        mac = re.findall(p, s)
+        m = mac[0].split('-')
         mac = ':'.join(['%02x' % int(x, 16) for x in m])
         return mac
 
