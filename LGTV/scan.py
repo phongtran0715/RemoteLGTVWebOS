@@ -31,7 +31,10 @@ def LGTVScan():
             if line.startswith(b'DLNADeviceName'):
                 (junk, data) = line.split(b':')
                 data = data.strip().decode('utf-8')
-                model = re.findall(r'\[LG\] webOS TV (.*)', unquote(data))[0]
+                try:
+                    model = re.findall(r'\[LG\] webOS TV (.*)', unquote(data))[0]
+                except:
+                    model="NA"
             data = {
                 'uuid': uuid,
                 'model': model,

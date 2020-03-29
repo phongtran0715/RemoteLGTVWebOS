@@ -143,7 +143,7 @@ def read_devices_list(file):
         with open(file) as f:
             devices = json.load(f)
     else:
-        print("Error! Devices list file doen't existed")
+        print("Waring! Devices list file doen't existed")
     return devices
 
 def scan_devices(output_file):
