@@ -5,11 +5,6 @@ from tkinter import messagebox
 import control as ctrl
 import os
 
-# global variable for list of tv in lan network
-cbListValue = list()
-devices = list()
-paired_devices = []
-
 class LGRemote:
     def __init__(self, parent):
         self.parent = parent
@@ -38,7 +33,7 @@ class LGRemote:
 
         self.lbLeftName = tk.Label(frame1, text="TVLG L", bg="yellow")
         self.lbLeftName.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
-        self.cbLeft = ttk.Combobox(frame1, values =cbListValue,postcommand=self.getListDevice)
+        self.cbLeft = ttk.Combobox(frame1, values =cbListValue,postcommand=self.updateComboValues)
         self.cbLeft.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
         self.cbLeft.bind("<<ComboboxSelected>>", lambda index: self.pairDevice(self.cbLeft.current()))
         
@@ -97,7 +92,7 @@ class LGRemote:
         #Them label TV LEFT/RIGHT
         self.lbRightName = tk.Label(frame9, text="TVLG R", bg="yellow")
         self.lbRightName.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
-        self.cbRight = ttk.Combobox(frame9, values =cbListValue,postcommand=self.getListDevice)
+        self.cbRight = ttk.Combobox(frame9, values =cbListValue,postcommand=self.updateComboValues)
         self.cbRight.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
         self.cbRight.bind("<<ComboboxSelected>>", lambda index: self.pairDevice(self.cbRight.current()))
         #Frame nut on/off
@@ -176,7 +171,7 @@ class LGRemote:
         frame15.grid(row=7, column=2)
         frame16.grid(row=8, column=2)
 
-    def getListDevice(self):
+    def updateComboValues(self):
         self.cbLeft["values"] = cbListValue
         self.cbRight["values"] = cbListValue
     
@@ -184,13 +179,13 @@ class LGRemote:
         global devices
         global cbListValue
         outputFile = os.path.join(workspace,"devices.json")
-        # ctrl.scan_devices(outputFile)
-        devices = ctrl.read_devices_list("devices.json")
-        # devices = ctrl.read_devices_list(outputFile)
-        # Pair devices
+        devices = ctrl.scan_devices(outputFile)
+        # devices = ctrl.read_devices_list("devices.json")
+        # Update combobox value
         cbListValue.clear()
         for item in devices:
             cbListValue.append(item['model'] + "_" + item['address'])
+        self.updateComboValues()
         messagebox.showinfo("Notify","Scan completed!")
 
     def off(self, index):
@@ -226,13 +221,16 @@ class LGRemote:
             messagebox.showerror("Error!","You must select TV device")        
 
     def pairDevice(self, index):
-        print(index)
         try:
-            if index not in paired_devices:
-                print('index of this item is: {}\n'.format(cbLeft.current()))
-                device = devices[index]
-                ctrl.pair_device(device['uuid'], device['address'])
-                # getCurrentVol(index)
+            device = devices[index]
+            name = device['uuid']
+            address = device['address']
+            configFile = name + "_" + address + ".json"
+            configFile = os.path.join(workspace,filename)
+            if os.path.isfile(configFile) == False:
+                result = ctrl.pair_device(name, address, configFile)
+                if result == False:
+                    messagebox.showerror("Error!","Can not pair TV device")        
             else:
                 print("Device index %d had already paired" % index)
         except:
@@ -260,7 +258,8 @@ class LGRemote:
     def getCurrentVol(self, index):
         command = "audioVolume"
         args = []
-        self.executeCommand(index, command, args)
+        sources = self.executeCommand(index, command, args)
+        return sources
     
     def getListInputs(self, index):
         command = "listInputs"
@@ -270,10 +269,14 @@ class LGRemote:
     def setInput(self, index, inputId):
         command = "setInput"
         args = []
-        self.executeCommand(index, command, args)
+        sources = self.getListInputs()
+        if len(sources) >= inputId:
+            args = [sources[inputId]]
+            self.executeCommand(index, command, args)
+        else:
+            messagebox.showerror("Error!","Input source doesn't existed")
 
     def listChannel(self, index):
-        print(index)
         command = "listChannels"
         args = []
         self.executeCommand(index, command, args)
@@ -306,6 +309,8 @@ def main():
     window.mainloop()
 
 if __name__ == '__main__':
+    cbListValue = list()
+    devices = list()
     workspace = os.path.join(os.path.expanduser("~"),".lgtv")
     if not os.path.exists(workspace):
         os.makedirs(workspace)

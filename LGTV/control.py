@@ -9,13 +9,6 @@ from scan import LGTVScan
 from remote import LGTVRemote
 from auth import LGTVAuth
 
-
-search_config = [
-    "/etc/lgtv/config.json",
-    "~/.lgtv/config.json",
-    "/opt/venvs/lgtv/config/config.json"
-]
-
 def usage(error=None):
     if error:
         print ("Error: " + error)
@@ -68,38 +61,11 @@ def parseargs(command, argv):
         output[a] = argv[i]
     return output
 
-
-def find_config():
-    w = None
-    for f in search_config:
-        f = os.path.expanduser(f)
-        f = os.path.abspath(f)
-        d = os.path.dirname(f)
-        if os.path.exists(d):
-            if os.access(d, os.W_OK):
-                w = f
-            if os.path.exists(f):
-                if os.access(f, os.W_OK):
-                    return f
-        elif os.access(os.path.dirname(d), os.W_OK):
-            os.makedirs(d)
-            w = f
-    if w is None:
-        print ("Cannot find suitable config path to write, create one in %s" % ' or '.join(search_config))
-        raise Exception("No config file")
-    return w
-
 def send_command(name, command, args, config):
     if command == "on":
         ws = LGTVRemote(name, **config[name])
         ws.on()
         return
-        
-        # try:
-        #     args = parseargs(name, args)
-        # except Exception as e:
-        #     usage(e.message)
-        #     return
     try:
         ws = LGTVRemote(name, **config[name])
         args = parseargs(command, args)
@@ -122,20 +88,23 @@ def read_config_file(name, host):
         print("Error! Config file doesn't existed")
     return data
 
-def pair_device(name, host):
+def pair_device(name, host, outputConfig):
+    result = False
     print("Start to authen device : %s - %s" % (name, host))
-    workspace = os.path.join(os.path.expanduser("~"),".lgtv")
-    filename = name + "_" + host + ".json"
-    filename = os.path.join(workspace,filename)
-    ws = LGTVAuth(name, host)
-    ws.connect()
-    ws.run_forever()
-    sleep(1)
-    config = ws.serialise()
-    if filename is not None:
-        with open(filename, 'w') as f:
-            f.write(json.dumps(config))
-        print ("Wrote config file: " + filename)
+    try:
+        ws = LGTVAuth(name, host)
+        ws.connect()
+        ws.run_forever()
+        sleep(1)
+        config = ws.serialise()
+        if outputConfig is not None:
+            with open(outputConfig, 'w') as f:
+                f.write(json.dumps(config))
+            print ("Wrote config file: " + outputConfig)
+            result = True
+    except:
+        print("Error! Can't pair device %s" % name)
+    return result
 
 def read_devices_list(file):
     devices = None
@@ -148,6 +117,7 @@ def read_devices_list(file):
 
 def scan_devices(output_file):
     results = LGTVScan()
+    devices = []
     if len(results) > 0:
         print (json.dumps({
             "result": "ok",
@@ -159,38 +129,17 @@ def scan_devices(output_file):
             address = it['address']
             model = it['model']
             #Save to json file
-            data = []
-            data.append({
+            devices.append({
                 'uuid': it['uuid'],
                 'model': it['model'],
                 'address': it['address'],
             })
         with open(output_file, 'w+') as outfile:
-            json.dump(data, outfile)
+            json.dump(devices, outfile)
             
     else:
         print (json.dumps({
             "result": "failed",
             "count": len(results)
         }))
-        return
-
-# def main():
-#     devices_list = os.path.join(workspace,'devices.json')
-#     # Scan all devices
-#     scan_devices(devices_list)
-
-#     # Read devices list
-#     devices = read_devices_list(devices_list)
-
-#     # Pair devices
-#     for item in devices:
-#         pair_device(item['uuid'], item['address'])
-
-#     # Send command
-#     for item in devices:
-#         config =  read_config_file(item['uuid'], item['address'])
-#         name = item['uuid']
-#         command = "off"
-#         args = []
-#         send_command(name, command, args, config)
+    return devices
