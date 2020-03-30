@@ -9,7 +9,7 @@ def main():
         print("Info! Not found any existed devices")
         print("Info! Start to scan devices")
         try:
-            device = control.scan_devices(devicesFile)
+            devices = control.scan_devices(devicesFile)
         except:
             print("Error 00! : Scan device unsuccessful")
     # Pairing
@@ -25,7 +25,7 @@ def main():
         if os.path.isfile(configFile) == False:
             print("Paring TV device : %s - %s" % (model, address))
             try:
-                result = ctrl.pair_device(name, address, configFile)
+                result = control.pair_device(name, address, configFile)
                 if result == False:
                     print("Error 01! Can not pair TV device")
             except:
