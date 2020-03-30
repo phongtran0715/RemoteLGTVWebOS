@@ -5,12 +5,13 @@ import control
 def main():
     #Read devices list
     devicesFile = os.path.join(workspace,"devices.json")
+    print(devicesFile)
     devices = control.read_devices_list(devicesFile)
     if devices == None:
         print("Info! Not found any existed devices")
         print("Info! Start to scan devices")
         try:
-            device = control.scan_devices(devicesFile)
+            devices = control.scan_devices(devicesFile)
         except:
             print("Error 00! : Scan device unsuccessful")
     # Pairing
@@ -26,7 +27,7 @@ def main():
         if os.path.isfile(configFile) == False:
             print("Paring TV device : %s - %s" % (model, address))
             try:
-                result = ctrl.pair_device(name, address, configFile)
+                result = control.pair_device(name, address, configFile)
                 if result == False:
                     print("Error 01! Can not pair TV device")
             except:
@@ -44,7 +45,7 @@ def main():
             continue
         print("Sending turn off command to TV : %s - %s" % (model, address))
         try:
-            ctrl.send_command(name, command, args, authConfig)
+            control.send_command(name, command, args, authConfig)
             print("Turn off successful!")
         except:
             print("Error 04! Can not turn off TV",)

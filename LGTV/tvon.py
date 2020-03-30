@@ -43,7 +43,7 @@ def main():
             continue
         print("Sending turn on command to TV : %s - %s" % (model, address))
         try:
-            ctrl.send_command(name, command, args, authConfig)
+            control.send_command(name, command, args, authConfig)
             print("Turn on successful!")
         except:
             print("Error 04! Can not turn on TV",)
