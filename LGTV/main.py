@@ -1,9 +1,10 @@
 import tkinter as tk
 from tkinter import HORIZONTAL
 from tkinter import ttk
-from tkinter import messagebox  
+from tkinter import messagebox
 import control as ctrl
 import os
+from configparser import ConfigParser
 
 class LGRemote:
     def __init__(self, parent):
@@ -36,7 +37,9 @@ class LGRemote:
         self.cbLeft = ttk.Combobox(frame1, values =cbListValue,postcommand=self.updateComboValues)
         self.cbLeft.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
         self.cbLeft.bind("<<ComboboxSelected>>", lambda index: self.pairDevice(self.cbLeft.current()))
-        
+        if appConfig.getint('combobox', 'leftIndex') >= 0:
+            self.cbLeft.current(appConfig.getint('combobox', 'leftIndex'))
+
         #Frame nut on/off
         frame2 = tk.Frame(self.parent, width=200, height=100)
         #Them button TV on/off
@@ -46,8 +49,8 @@ class LGRemote:
         self.btnLeftOff.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=20)
         #Frame nut HDMI
         frame3 = tk.Frame(self.parent, width=200, height=100)
-        self.btnLeftHdmi1 = tk.Button(frame3, text="HDMI_1", bg="white", command =lambda: self.setInput(self.cbLeft.current(), 0))
-        self.btnLeftHdmi2 = tk.Button(frame3, text="HDMI_2", bg="white", command =lambda: self.setInput(self.cbLeft.current(), 1))
+        self.btnLeftHdmi1 = tk.Button(frame3, text="HDMI_1", bg="white", command =lambda: self.setInput(self.cbLeft.current(), "HDMI_1"))
+        self.btnLeftHdmi2 = tk.Button(frame3, text="HDMI_2", bg="white", command =lambda: self.setInput(self.cbLeft.current(), "HDMI_2"))
         self.btnLeftHdmi1.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
         self.btnLeftHdmi2.pack(fill=tk.BOTH, side=tk.BOTTOM, expand=True, padx=5, pady=5)
         #Frame tang giam am luong
@@ -95,6 +98,9 @@ class LGRemote:
         self.cbRight = ttk.Combobox(frame9, values =cbListValue,postcommand=self.updateComboValues)
         self.cbRight.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
         self.cbRight.bind("<<ComboboxSelected>>", lambda index: self.pairDevice(self.cbRight.current()))
+        if appConfig.getint('combobox', 'rightIndex') >= 0:
+            self.cbRight.current(appConfig.getint('combobox', 'rightIndex'))
+
         #Frame nut on/off
         frame10 = tk.Frame(self.parent, width=200, height=100)
         #Them button TV on/off
@@ -104,8 +110,8 @@ class LGRemote:
         self.btnRightOff.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=20)
         #Frame nut HDMI
         frame11 = tk.Frame(self.parent, width=200, height=100)
-        self.btnRightHdmi1 = tk.Button(frame11, text="HDMI_1", bg="white", command =lambda: self.setInput(self.cbRight.current(), 0))
-        self.btnRightHdmi2 = tk.Button(frame11, text="HDMI_2", bg="white", command =lambda: self.setInput(self.cbRight.current(), 1))
+        self.btnRightHdmi1 = tk.Button(frame11, text="HDMI_1", bg="white", command =lambda: self.setInput(self.cbRight.current(), "HDMI_1"))
+        self.btnRightHdmi2 = tk.Button(frame11, text="HDMI_2", bg="white", command =lambda: self.setInput(self.cbRight.current(), "HDMI_2"))
         self.btnRightHdmi1.pack(fill=tk.BOTH, side=tk.TOP, expand=True, padx=5, pady=5)
         self.btnRightHdmi2.pack(fill=tk.BOTH, side=tk.BOTTOM, expand=True, padx=5, pady=5)
         #Frame tang giam am luong
@@ -198,7 +204,7 @@ class LGRemote:
             config = ctrl.read_config_file(name, address)
             if config == None :
                 messagebox.showerror("Error","Can not get config file!")
-                return            
+                return
             print(config)
             ctrl.send_command(name, command, args, config)
         else:
@@ -214,7 +220,7 @@ class LGRemote:
             config = ctrl.read_config_file(name, address)
             if config == None :
                 messagebox.showerror("Error","Can not get config file!")
-                return            
+                return
             print(config)
             ctrl.send_command(name, command, args, config)
         else:
@@ -230,7 +236,7 @@ class LGRemote:
             if os.path.isfile(configFile) == False:
                 result = ctrl.pair_device(name, address, configFile)
                 if result == False:
-                    messagebox.showerror("Error 002!","Can not pair TV device")        
+                    messagebox.showerror("Error 002!","Can not pair TV device")
             else:
                 print("Device index %d had already paired" % index)
         except:
@@ -244,7 +250,7 @@ class LGRemote:
             config = ctrl.read_config_file(name, address)
             if(config == None):
                 messagebox.showerror("Error","Can not get config file!")
-                return            
+                return
             ctrl.send_command(name, command, args, config)
 
     def setVolume(self, eventObject):
@@ -259,7 +265,7 @@ class LGRemote:
         args = []
         sources = self.executeCommand(index, command, args)
         return sources
-    
+
     def getListInputs(self, index):
         print("Function getListInputs : index = " + str(index))
         command = "listInputs"
@@ -269,14 +275,8 @@ class LGRemote:
     def setInput(self, index, inputId):
         print(index)
         command = "setInput"
-        args = []
-        #sources = self.getListInputs(index)
-        self.getListInputs(index)
-        # if len(sources) >= inputId:
-        #     args = [sources[inputId]]
-        #     self.executeCommand(index, command, args)
-        # else:
-        #     messagebox.showerror("Error!","Input source doesn't existed")
+        args = [inputId]
+        self.executeCommand(index, command, args)
 
     def listChannel(self, index):
         command = "listChannels"
@@ -286,12 +286,19 @@ class LGRemote:
     def channelUp(self, index):
         command = "inputChannelUp"
         args = []
-        self.executeCommand(index, command, args)        
+        self.executeCommand(index, command, args)
 
     def channelDown(self, index):
         command = "inputChannelDown"
         args = []
         self.executeCommand(index, command, args)
+
+
+def on_closing():
+    print("Form closing event!")
+    with open('config.ini', 'w') as f:
+        appConfig.write(f)
+    window.destroy()
 
 def loadDevicesList():
     global devices
@@ -306,15 +313,19 @@ def loadDevicesList():
 def main():
     # get device list
     loadDevicesList()
-    window = tk.Tk()
     fm = LGRemote(window)
+    window.protocol("WM_DELETE_WINDOW", on_closing)
     window.mainloop()
 
+
 if __name__ == '__main__':
+    appConfig = ConfigParser()
+    appConfig.read('config.ini')
     cbListValue = list()
     devices = list()
     workspace = os.path.join(os.path.expanduser("~"),".lgtv")
     if not os.path.exists(workspace):
         os.makedirs(workspace)
     print("workspace : %s" % workspace)
+    window = tk.Tk()
     main()
