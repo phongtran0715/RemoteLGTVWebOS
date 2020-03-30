@@ -36,9 +36,12 @@ class LGRemote:
         self.lbLeftName.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
         self.cbLeft = ttk.Combobox(frame1, values =cbListValue,postcommand=self.updateComboValues)
         self.cbLeft.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
-        self.cbLeft.bind("<<ComboboxSelected>>", lambda index: self.pairDevice(self.cbLeft.current()))
-        if appConfig.getint('combobox', 'leftIndex') >= 0:
-            self.cbLeft.current(appConfig.getint('combobox', 'leftIndex'))
+        self.cbLeft.bind("<<ComboboxSelected>>", lambda index: self.pairDevice(self.cbLeft.current(), "leftIndex"))
+        try:
+            if appConfig.getint('combobox', 'leftIndex') >= 0:
+                self.cbLeft.current(appConfig.getint('combobox', 'leftIndex'))
+        except:
+            pass
 
         #Frame nut on/off
         frame2 = tk.Frame(self.parent, width=200, height=100)
@@ -97,9 +100,12 @@ class LGRemote:
         self.lbRightName.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=5, pady=5)
         self.cbRight = ttk.Combobox(frame9, values =cbListValue,postcommand=self.updateComboValues)
         self.cbRight.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True, padx=5, pady=5)
-        self.cbRight.bind("<<ComboboxSelected>>", lambda index: self.pairDevice(self.cbRight.current()))
-        if appConfig.getint('combobox', 'rightIndex') >= 0:
-            self.cbRight.current(appConfig.getint('combobox', 'rightIndex'))
+        self.cbRight.bind("<<ComboboxSelected>>", lambda index: self.pairDevice(self.cbRight.current(), "rightIndex"))
+        try:
+            if appConfig.getint('combobox', 'rightIndex') >= 0:
+                self.cbRight.current(appConfig.getint('combobox', 'rightIndex'))
+        except:
+            pass
 
         #Frame nut on/off
         frame10 = tk.Frame(self.parent, width=200, height=100)
@@ -226,7 +232,7 @@ class LGRemote:
         else:
             messagebox.showerror("Error!","You must select TV device")
 
-    def pairDevice(self, index):
+    def pairDevice(self, index, side):
         try:
             device = devices[index]
             name = device['uuid']
@@ -234,10 +240,14 @@ class LGRemote:
             configFile = name + "_" + address + ".json"
             configFile = os.path.join(workspace,configFile)
             if os.path.isfile(configFile) == False:
-                result = ctrl.pair_device(name, address, configFile)
+                # result = ctrl.pair_device(name, address, configFile)
+                result = True
                 if result == False:
                     messagebox.showerror("Error 002!","Can not pair TV device")
+                else:
+                    appConfig.set("combobox", side, str(index))
             else:
+                appConfig.set("combobox", side, str(index))
                 print("Device index %d had already paired" % index)
         except:
             messagebox.showerror("Error 001!","Can not pair TV device")
